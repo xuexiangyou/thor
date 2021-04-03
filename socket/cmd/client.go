@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net"
+	"strings"
 	"time"
 
 	"github.com/xuexiangyou/thor/socket/pack"
@@ -32,14 +33,20 @@ func startClient(ip string) {
 		r := rand.New(rand.NewSource(time.Now().Unix()))
 		n := r.Intn(100000) + 60000
 		message := GetRandomString(n)
-		fmt.Println("发送消息", len(message))
 		err := c.ClientWrite(message)
-		if err  != nil {
+		if err != nil {
+			if strings.Contains(err.Error(), "connection was bad") {
+				break
+			}
 			fmt.Println(err)
 		}
+		fmt.Println("发送消息", len(message))
 		time.Sleep(2 * time.Second)
 		// 读取数据
 		result, err := c.pkg.ReadPacket()
+		if err != nil {
+			fmt.Println("接收消息错误", err.Error())
+		}
 		fmt.Println("读取消息", len(string(result)))
 	}
 }
