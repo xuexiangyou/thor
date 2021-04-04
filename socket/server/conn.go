@@ -13,6 +13,8 @@ type ClientConn struct {
 
 	pkg *pack.PacketIO
 
+	proxy *Server
+
 	closed bool
 }
 
@@ -44,6 +46,7 @@ func (c *ClientConn) Run() {
 			fmt.Println(err.Error(), buf) // todo 可以通过存日志后面线上出问题调试
 		}
 		c.Close()
+		c.proxy.wg.Done()
 	}()
 
 	for  {
@@ -54,8 +57,12 @@ func (c *ClientConn) Run() {
 		}
 		// 写入数据
 		err = c.writeMsg(string(data))
+		if err != nil {
+			fmt.Println("写入数据失败", err.Error())
+			return
+		}
 
-		if c.closed { // 如果关闭了直接返回
+		if !c.proxy.running { // 如果关闭了直接返回
 			return
 		}
 	}

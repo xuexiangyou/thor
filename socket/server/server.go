@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"net"
+	"sync"
 
 	"github.com/xuexiangyou/thor/socket/pack"
 )
@@ -12,7 +13,10 @@ type Server struct {
 
 	listener net.Listener
 
+	wg sync.WaitGroup
+
 	running bool
+
 }
 
 func NewServer(addr string) (*Server, error) {
@@ -25,6 +29,7 @@ func NewServer(addr string) (*Server, error) {
 	if err != nil {
 		return nil, err
 	}
+	s.wg = sync.WaitGroup{}
 	return s, nil
 }
 
@@ -43,9 +48,12 @@ func (s *Server) Run() error {
 			fmt.Println("接收链接", err.Error())
 			continue
 		}
+
+		s.wg.Add(1)
+
 		go s.onConn(conn)
 	}
-
+	s.wg.Wait()
 	return nil
 }
 
@@ -59,5 +67,6 @@ func (s *Server) newClientConn(co net.Conn) *ClientConn{
 	c.c = co
 	c.pkg = pack.NewPacketIO(co)
 	c.closed = false
+	c.proxy = s
 	return c
 }
