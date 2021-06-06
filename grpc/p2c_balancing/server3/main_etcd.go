@@ -14,7 +14,7 @@ import (
 var (
 	addr = "127.0.0.1:50091"
 	etcdEndpoints = []string{
-		"129.211.63.154:2379",
+		"127.0.0.1:2379",
 	}
 	etcdKey = "add.rpc"
 )
