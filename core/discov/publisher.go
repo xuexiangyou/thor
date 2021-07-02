@@ -7,7 +7,7 @@ import (
 	"github.com/xuexiangyou/thor/core/lang"
 	"github.com/xuexiangyou/thor/core/syncx"
 	"github.com/xuexiangyou/thor/core/threading"
-	"go.etcd.io/etcd/clientv3"
+	"go.etcd.io/etcd/client/v3"
 )
 
 type (

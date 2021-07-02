@@ -1,7 +1,6 @@
 package resolver
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/xuexiangyou/thor/core/discov"
@@ -12,7 +11,6 @@ type discovBuilder struct {}
 
 func (d *discovBuilder) Build(target resolver.Target, cc resolver.ClientConn, opts resolver.BuildOptions) (
 	resolver.Resolver, error) {
-	fmt.Println("11111", target)
 	hosts := strings.FieldsFunc(target.Authority, func(r rune) bool {
 		return r == EndpointSepChar
 	})
